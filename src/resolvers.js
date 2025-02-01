@@ -8,9 +8,10 @@ const resolvers = {
                 // Inserta el proveedor en la base de datos remota
                 const provider = await Provider.create(input);
 
-                // Notifica al microservicio de Eliminar
+                // Notificar a los otros microservicios
                 const instances = [
-                    'http://localhost:5001/sync-provider', // Cambia a tu configuración
+                    'http://localhost:5001/sync-create', // Microservicio de Eliminar
+                    'http://localhost:5002/sync-create'  // Microservicio de Update
                 ];
 
                 for (const instance of instances) {
