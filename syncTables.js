@@ -1,15 +1,15 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 // Conexión a la base de datos del microservicio de Crear
-const createDB = new Sequelize('ProveedorDB', 'user', 'password', {
+const createDB = new Sequelize('ProviderDB', 'erick', 'Password@123', {
     host: '<98.84.155.123>',
     dialect: 'mysql',
     logging: false,
 });
 
 // Conexión a la base de datos del microservicio de Eliminar
-const deleteDB = new Sequelize('ProveedorDB', 'user', 'password', {
-    host: '<IP_MICROSERVICIO_ELIMINAR>',
+const deleteDB = new Sequelize('ProviderDB', 'erick', 'Password@123', {
+    host: '<44.222.206.85>',
     dialect: 'mysql',
     logging: false,
 });
