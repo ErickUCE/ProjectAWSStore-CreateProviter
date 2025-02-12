@@ -35,14 +35,29 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+          echo "✅ Iniciando despliegue en EC2..."
+
           # Iniciar sesión en Docker Hub
           sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
           # Descargar la última imagen desde Docker Hub
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/projectawsstore-createprovider:latest
 
-          # Detener y eliminar el contenedor anterior si existe
-          sudo docker stop createprovider || true && sudo docker rm createprovider || true
+          # Verificar si el contenedor ya existe y eliminarlo antes de correr uno nuevo
+          if [ $(sudo docker ps -aq -f name=create-provider) ]; then
+            echo "🛑 Deteniendo y eliminando el contenedor existente..."
+            sudo docker stop create-provider || true
+            sudo docker rm -f create-provider || true
+          fi
 
-          # Ejecutar el contenedor sin .env ya que no lo necesita
+          # Asegurar que el puerto 5000 no esté bloqueado
+          if sudo lsof -i :5000; then
+            echo "⚠️ El puerto 5000 está en uso. Liberándolo..."
+            sudo lsof -t -i :5000 | xargs sudo kill -9 || true
+          fi
+
+          # Ejecutar el nuevo contenedor
+          echo "🚀 Iniciando nuevo contenedor create-provider..."
           sudo docker run -d -p 4000:4000 -p 5000:5000 --name create-provider ${{ secrets.DOCKER_USERNAME }}/projectawsstore-createprovider
+
+          echo "✅ Despliegue completado exitosamente."
