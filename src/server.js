@@ -114,7 +114,7 @@ sequelize.sync() // Sin forzar la recreación
     .then(() => {
         console.log('Database synced!');
         server.listen({ port: 4000 }).then(({ url }) => {
-            console.log(`🚀 Server papi ready at ${url}`);
+            console.log(`🚀 Server owow ready at ${url}`);
         });
     })
     .catch(err => {

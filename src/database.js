@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 
 const sequelize = new Sequelize('ProviderDB', 'erick', 'Password@123', {
-    host: '3.84.200.203', // Dirección IP de tu base de datos
+    host: '34.198.77.62', // Dirección IP de tu base de datos
     dialect: 'mysql',
     logging: false, // Cambia a true si deseas ver los logs de Sequelize
 });
