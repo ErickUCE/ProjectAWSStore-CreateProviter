@@ -5,9 +5,17 @@ const resolvers = require('./resolvers'); // Resolvers para GraphQL
 const express = require('express');
 const bodyParser = require('body-parser');
 const Provider = require('./models/provider');
+const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
+
+app.use(cors({
+    origin: "http://localhost:3000", // Cambia esto por el dominio en producción
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type,Authorization"
+}));
+
 
 // ✅ Endpoint para sincronizar eliminación de proveedores desde el microservicio de Eliminar
 app.post('/sync-delete', async (req, res) => {
