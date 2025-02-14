@@ -61,22 +61,34 @@ app.post('/sync-update', async (req, res) => {
 
 // ✅ Endpoint para sincronizar la creación de proveedores en otros microservicios
 app.post('/sync-create', async (req, res) => {
-    console.log('Solicitud recibida en /sync-create:', req.body);
+    console.log('📥 Solicitud recibida en /sync-create:', req.body);
     const { id, name, address, email } = req.body;
 
     try {
-        // Verifica si el proveedor ya existe en la base de datos de Crear
-        const existingProvider = await Provider.findByPk(id);
-        if (!existingProvider) {
-            await Provider.create({ id, name, address, email });
-            console.log(`Proveedor con ID ${id} sincronizado en la base de Crear`);
+        let newProvider;
+
+        if (!id) {
+            // Si el ID no viene en la solicitud, generar uno automáticamente
+            newProvider = await Provider.create({ name, address, email });
+            console.log(`✅ Proveedor creado con nuevo ID ${newProvider.id} en la base de Crear`);
         } else {
-            console.log(`Proveedor con ID ${id} ya existe en la base de Crear`);
+            // Si el ID ya viene en la solicitud, usarlo
+            const existingProvider = await Provider.findByPk(id);
+            if (!existingProvider) {
+                newProvider = await Provider.create({ id, name, address, email });
+                console.log(`✅ Proveedor sincronizado con ID ${id} en la base de Crear`);
+            } else {
+                console.log(`🔹 Proveedor con ID ${id} ya existe en la base de Crear`);
+            }
         }
 
-        res.status(200).send({ message: `Proveedor con ID ${id} sincronizado correctamente en Crear` });
+        res.status(200).send({
+            id: newProvider?.id || id, // Asegurar que se devuelve un ID válido
+            message: `Proveedor con ID ${newProvider?.id || id} sincronizado correctamente en Crear`
+        });
+
     } catch (error) {
-        console.error('Error sincronizando proveedor en Crear:', error);
+        console.error('❌ Error sincronizando proveedor en Crear:', error);
         res.status(500).send({ error: 'Failed to sync provider creation' });
     }
 });
